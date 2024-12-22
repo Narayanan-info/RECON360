@@ -20,6 +20,17 @@ func main() {
 	input := scanner.Text()
 	domains := strings.Split(input, ",")
 
+	// Install required tools if missing
+	requiredTools := []string{"subfinder", "assetfinder", "httpx", "waybackurls", "gau", "uro"}
+	for _, tool := range requiredTools {
+		if !isToolInstalled(tool) {
+			fmt.Printf("Tool %s is not installed. Installing...\n", tool)
+			installTool(tool)
+		} else {
+			fmt.Printf("Tool %s is already installed.\n", tool)
+		}
+	}
+
 	// Create results directory
 	timestamp := time.Now().Format("20060102_150405")
 	outputDir := fmt.Sprintf("results/run_%s", timestamp)
@@ -89,6 +100,42 @@ func executeCommand(cmd string) {
 	command.Stderr = os.Stderr
 	if err := command.Run(); err != nil {
 		fmt.Printf("Error executing command: %s\n", err)
+		os.Exit(1)
+	}
+}
+
+func isToolInstalled(tool string) bool {
+	cmd := exec.Command("bash", "-c", fmt.Sprintf("command -v %s", tool))
+	err := cmd.Run()
+	return err == nil
+}
+
+func installTool(tool string) {
+	var installCommand string
+	switch tool {
+	case "subfinder":
+		installCommand = "go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
+	case "assetfinder":
+		installCommand = "go install github.com/tomnomnom/assetfinder@latest"
+	case "httpx":
+		installCommand = "go install github.com/projectdiscovery/httpx/cmd/httpx@latest"
+	case "waybackurls":
+		installCommand = "go install github.com/tomnomnom/waybackurls@latest"
+	case "gau":
+		installCommand = "go install github.com/lc/gau@latest"
+	case "uro":
+		installCommand = "go install github.com/Emoe/uro@latest"
+	default:
+		fmt.Printf("Unknown tool: %s\n", tool)
+		return
+	}
+
+	fmt.Printf("Installing %s...\n", tool)
+	command := exec.Command("bash", "-c", installCommand)
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+	if err := command.Run(); err != nil {
+		fmt.Printf("Error installing %s: %s\n", tool, err)
 		os.Exit(1)
 	}
 }
