@@ -21,7 +21,7 @@ func main() {
 	domains := strings.Split(input, ",")
 
 	// Install required tools if missing
-	requiredTools := []string{"subfinder", "assetfinder", "httpx", "waybackurls", "gau", "uro"}
+	requiredTools := []string{"subfinder", "assetfinder", "httpx", "waybackurls", "gau", "anew"}
 	for _, tool := range requiredTools {
 		if !isToolInstalled(tool) {
 			fmt.Printf("Tool %s is not installed. Installing...\n", tool)
@@ -62,17 +62,19 @@ func main() {
 
 		// Merge and Filter URLs
 		pathsFile := fmt.Sprintf("%s/paths.txt", domainOutput)
-		executeCommand(fmt.Sprintf("cat %s/wayback/wayback-url.txt %s/gau/gau-urls.txt | anew %s", waybackDir, gauDir, pathsFile))
-		executeCommand(fmt.Sprintf("cat %s | uro -o %s/Final-URO/uro-filtered.txt", pathsFile, domainOutput))
+		executeCommand(fmt.Sprintf("cat %s/wayback-url.txt %s/gau-urls.txt | anew %s", waybackDir, gauDir, pathsFile))
 
 		// Check live endpoints
-		executeCommand(fmt.Sprintf("httpx -l %s/Final-URO/uro-filtered.txt -o %s/Final-Live/URL-LIVE.txt -threads 200 -silent", domainOutput, domainOutput))
+		finalLiveDir := fmt.Sprintf("%s/Final-Live", domainOutput)
+		os.MkdirAll(finalLiveDir, os.ModePerm)
+		executeCommand(fmt.Sprintf("httpx -l %s/paths.txt -o %s/URL-LIVE.txt -threads 200 -silent", domainOutput, finalLiveDir))
 
 		// Filter specific file types
 		filterFiles(domainOutput, "PHP-Files", "\\.php$")
 		filterFiles(domainOutput, "JSON-Files", "\\.json$")
 		filterFiles(domainOutput, "Env-Files", "\\.env$")
-		filterFiles(domainOutput, "Log-Files", "\\.log$")
+		filterFiles(domainOutput, "Js-Files", "\\.js$")
+		filterFiles(domainOutput, "Aspx-Files", "\\.aspx$")
 
 		fmt.Printf("Recon process for %s completed. Results saved in %s.\n", domain, domainOutput)
 	}
@@ -115,6 +117,8 @@ func installTool(tool string) {
 	switch tool {
 	case "subfinder":
 		installCommand = "go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
+	case "anew":
+		installCommand = "go install -v github.com/tomnomnom/anew@latest"
 	case "assetfinder":
 		installCommand = "go install github.com/tomnomnom/assetfinder@latest"
 	case "httpx":
@@ -123,8 +127,6 @@ func installTool(tool string) {
 		installCommand = "go install github.com/tomnomnom/waybackurls@latest"
 	case "gau":
 		installCommand = "go install github.com/lc/gau@latest"
-	case "uro":
-		installCommand = "pip3 install uro"
 	default:
 		fmt.Printf("Unknown tool: %s\n", tool)
 		return

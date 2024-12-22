@@ -26,5 +26,3 @@ RECON360 requires Go to be installed on your system to run and install the neces
 
 3. **Install the necessary tools:**:
     The tool will automatically check and install missing tools such as `subfinder`, `assetfinder`, `httpx`, `waybackurls`, `gau`, and `uro`.
-
-## Usage
