@@ -114,7 +114,7 @@ func installTool(tool string) {
 	var installCommand string
 	switch tool {
 	case "subfinder":
-		installCommand = "go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
+		installCommand = "go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
 	case "assetfinder":
 		installCommand = "go install github.com/tomnomnom/assetfinder@latest"
 	case "httpx":
