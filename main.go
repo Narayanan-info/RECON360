@@ -73,8 +73,14 @@ func main() {
 		filterFiles(domainOutput, "PHP-Files", "\\.php$")
 		filterFiles(domainOutput, "JSON-Files", "\\.json$")
 		filterFiles(domainOutput, "Env-Files", "\\.env$")
-		filterFiles(domainOutput, "Js-Files", "\\.js$")
+		filterFiles(domainOutput, "JS-Files", "\\.js$")
 		filterFiles(domainOutput, "Aspx-Files", "\\.aspx$")
+		filterFiles(domainOutput, "PDF-Files", "\\.pdf$")
+		filterFiles(domainOutput, "CSV-Files", "\\.csv$")
+		filterFiles(domainOutput, "TXT-Files", "\\.txt$")
+		filterFiles(domainOutput, "Xlsx-Files", "\\.xlsx$")
+		filterFiles(domainOutput, "LOG-Files", "\\.log$")
+		filterFiles(domainOutput, "Zip-Files", "\\.zip$")
 
 		fmt.Printf("Recon process for %s completed. Results saved in %s.\n", domain, domainOutput)
 	}
