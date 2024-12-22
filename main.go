@@ -124,7 +124,7 @@ func installTool(tool string) {
 	case "gau":
 		installCommand = "go install github.com/lc/gau@latest"
 	case "uro":
-		installCommand = "go install github.com/Emoe/uro@latest"
+		installCommand = "pip3 install uro"
 	default:
 		fmt.Printf("Unknown tool: %s\n", tool)
 		return
