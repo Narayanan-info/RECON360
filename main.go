@@ -21,7 +21,7 @@ func main() {
 	domains := strings.Split(input, ",")
 
 	// Install required tools if missing
-	requiredTools := []string{"subfinder", "assetfinder", "httpx", "waybackurls", "gau", "anew"}
+	requiredTools := []string{"subfinder", "assetfinder", "httpx", "waybackurls", "gau", "anew", "gospider", "hakrawler", "katana"}
 	for _, tool := range requiredTools {
 		if !isToolInstalled(tool) {
 			fmt.Printf("Tool %s is not installed. Installing...\n", tool)
@@ -55,14 +55,26 @@ func main() {
 		// URL Collection
 		waybackDir := fmt.Sprintf("%s/wayback", domainOutput)
 		gauDir := fmt.Sprintf("%s/gau", domainOutput)
+		gospiderDir := fmt.Sprintf("%s/gospider", domainOutput)
+		hakrawlerDir := fmt.Sprintf("%s/hakrawler", domainOutput)
+		katanaDir := fmt.Sprintf("%s/katana", domainOutput)
+
 		os.MkdirAll(waybackDir, os.ModePerm)
 		os.MkdirAll(gauDir, os.ModePerm)
-		executeCommand(fmt.Sprintf("echo %s | waybackurls | anew %s/wayback-url.txt", domain, waybackDir))
-		executeCommand(fmt.Sprintf("echo %s | gau | anew %s/gau-urls.txt", domain, gauDir))
+		os.MkdirAll(gospiderDir, os.ModePerm)
+		os.MkdirAll(hakrawlerDir, os.ModePerm)
+		os.MkdirAll(katanaDir, os.ModePerm)
+
+		// Corrected Commands
+		executeCommand(fmt.Sprintf("cat %s/Genesis-live.txt | waybackurls | anew %s/wayback-url.txt", domainOutput, waybackDir))
+		executeCommand(fmt.Sprintf("cat %s/Genesis-live.txt | gau | anew %s/gau-urls.txt", domainOutput, gauDir))
+		executeCommand(fmt.Sprintf("cat %s/Genesis-live.txt | gospider -c 10 -d 5 -t 20 --blacklist '(?i)\\.(jpg|jpeg|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)$' --other-source --timeout 10 | grep -e 'code-200' | awk '{print $5}' | grep '=' | anew %s/gospider-urls.txt", domainOutput, gospiderDir))
+		executeCommand(fmt.Sprintf("cat %s/Genesis-live.txt | hakrawler -d 10 | grep '=' | egrep -i '\\.(jpg|jpeg|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)$' --invert-match | anew %s/hakrawler-urls.txt", domainOutput, hakrawlerDir))
+		executeCommand(fmt.Sprintf("cat %s/Genesis-live.txt | katana -f url -d 10 | anew %s/katana-urls.txt", domainOutput, katanaDir))
 
 		// Merge and Filter URLs
 		pathsFile := fmt.Sprintf("%s/paths.txt", domainOutput)
-		executeCommand(fmt.Sprintf("cat %s/wayback-url.txt %s/gau-urls.txt | anew %s", waybackDir, gauDir, pathsFile))
+		executeCommand(fmt.Sprintf("cat %s/wayback-url.txt %s/gau-urls.txt %s/gospider-urls.txt %s/hakrawler-urls.txt %s/katana-urls.txt | anew %s", waybackDir, gauDir, gospiderDir, hakrawlerDir, katanaDir, pathsFile))
 
 		// Check live endpoints
 		finalLiveDir := fmt.Sprintf("%s/Final-Live", domainOutput)
@@ -70,6 +82,7 @@ func main() {
 		executeCommand(fmt.Sprintf("httpx -l %s/paths.txt -o %s/URL-LIVE.txt -threads 200 -silent", domainOutput, finalLiveDir))
 
 		// Filter specific file types
+
 		filterFiles(domainOutput, "PHP-Files", "\\.php$")
 		filterFiles(domainOutput, "JSON-Files", "\\.json$")
 		filterFiles(domainOutput, "Env-Files", "\\.env$")
@@ -126,13 +139,20 @@ func installTool(tool string) {
 	case "anew":
 		installCommand = "go install -v github.com/tomnomnom/anew@latest"
 	case "assetfinder":
-		installCommand = "go install github.com/tomnomnom/assetfinder@latest"
+		installCommand = "go install -v github.com/tomnomnom/assetfinder@latest"
 	case "httpx":
-		installCommand = "go install github.com/projectdiscovery/httpx/cmd/httpx@latest"
+		installCommand = "go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest"
 	case "waybackurls":
-		installCommand = "go install github.com/tomnomnom/waybackurls@latest"
+		installCommand = "go install -v github.com/tomnomnom/waybackurls@latest"
 	case "gau":
-		installCommand = "go install github.com/lc/gau@latest"
+		installCommand = "go install -v github.com/lc/gau@latest"
+	case "gospider":
+		installCommand = "go install -v github.com/jaeles-project/gospider@latest"
+	case "hakrawler":
+		installCommand = "go install -v github.com/hakluke/hakrawler@latest"
+	case "katana":
+		installCommand = "go install -v github.com/projectdiscovery/katana/cmd/katana@latest"
+
 	default:
 		fmt.Printf("Unknown tool: %s\n", tool)
 		return
@@ -149,8 +169,27 @@ func installTool(tool string) {
 }
 
 func filterFiles(outputDir, subDir, regex string) {
+	// Construct the directory path
 	dir := fmt.Sprintf("%s/%s", outputDir, subDir)
-	os.MkdirAll(dir, os.ModePerm)
-	cmd := fmt.Sprintf("grep \"%s\" %s/Final-Live/URL-LIVE.txt > %s/%s-files.txt", regex, outputDir, dir, strings.TrimSuffix(subDir, "-Files"))
+
+	// Ensure the output directory exists
+	err := os.MkdirAll(dir, os.ModePerm)
+	if err != nil {
+		fmt.Printf("Error creating directory %s: %v\n", dir, err)
+		return
+	}
+
+	// Construct the output file path
+	outputFile := fmt.Sprintf("%s/%s-files.txt", dir, strings.TrimSuffix(subDir, "-Files"))
+
+	// Construct the grep command with a fallback to avoid errors
+	cmd := fmt.Sprintf("grep \"%s\" %s/Final-Live/URL-LIVE.txt > %s || true", regex, outputDir, outputFile)
+
+	// Execute the command
 	executeCommand(cmd)
+	if err != nil {
+		fmt.Printf("No matches found for pattern '%s'. Skipping...\n", regex)
+	} else {
+		fmt.Printf("Filtered files for pattern '%s' saved to %s\n", regex, outputFile)
+	}
 }
