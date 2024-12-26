@@ -21,7 +21,7 @@ RECON360 requires Go to be installed on your system to run and install the neces
 
 2. **Install RECON360:**:
    ```bash
-   go install github.com/Narayanan-info/RECON360@latest
+   go install github.com/Narayanan-info/RECON360@main
    ```
 
 3. **Install the necessary tools:**:
