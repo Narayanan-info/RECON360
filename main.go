@@ -81,6 +81,22 @@ func main() {
 		os.MkdirAll(finalLiveDir, os.ModePerm)
 		executeCommand(fmt.Sprintf("httpx -l %s/paths.txt -o %s/URL-LIVE.txt -threads 200 -silent", domainOutput, finalLiveDir))
 
+		// Remove duplicate URLs
+		uniqueFile := fmt.Sprintf("%s/URL-LIVE-UNIQUE.txt", finalLiveDir)
+		executeCommand(fmt.Sprintf("sort %s/URL-LIVE.txt | uniq > %s", finalLiveDir+"/URL-LIVE.txt", uniqueFile))
+
+		// Check live endpoints
+		OpenRedirectDir := fmt.Sprintf("%s/Open-Redirect", domainOutput)
+		os.MkdirAll(OpenRedirectDir, os.ModePerm)
+
+		// Use the correct path for URL-LIVE.txt
+		liveURLFile := fmt.Sprintf("%s/URL-LIVE-UNIQUE.txt", finalLiveDir)
+		redirectParamsFile := fmt.Sprintf("%s/redirect_params.txt", OpenRedirectDir)
+
+		// Correctly escape quotes in the grep command
+		grepCommand := fmt.Sprintf(`grep -E "url=|redirect=|next=|return=|dest=|destination=|to=|goto=|out=|path=|view=|continue=|rurl=|rdr=|redir=|u=|ref=|refer=|site=|uri=|link=|callback=|forward=|forwardTo=|go=|target=|returnTo=|return_url=|redirect_uri=|redirect_url=|redirectTo=|RelayState=" %s > %s`, liveURLFile, redirectParamsFile)
+		executeCommand(grepCommand)
+
 		// Filter specific file types
 
 		filterFiles(domainOutput, "PHP-Files", "\\.php$")
