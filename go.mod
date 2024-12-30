@@ -1,3 +1,3 @@
-module github.com/Narayanan-info/RECON360
+module github.com/Narayanan-info/RECON60
 
 go 1.22.2
