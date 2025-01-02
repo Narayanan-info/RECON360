@@ -1,4 +1,12 @@
-# RECON60 - Advanced Bug Bounty Hunting Recon Tool Kit
+<h1 align="center">
+  <br>
+  <a href="#"><img src="assets/recon60.png" alt="Assets"></a>
+  <br>
+  File Upload Secuirty Best Practices  
+  <br>
+</h1>
+
+<h4 align="center">Advanced ( 🔥 ) Advanced Bug Bounty Hunting Recon Tool Kit V2.0</h4>  
 
 The Advanced Bug Bounty Hunting Recon Tool Kit is a comprehensive automation suite designed for bug bounty hunters. It simplifies the process of reconnaissance by combining subdomain enumeration, URL collection, and vulnerability discovery into a single streamlined workflow. The tool identifies live domains, collects and analyzes paths, and filters files of interest efficiently.
 
