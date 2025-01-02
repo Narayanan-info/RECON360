@@ -26,43 +26,37 @@ RECON60 requires Go to be installed on your system to run and install the necess
    ```
 
 3. **Install the necessary tools:**:
-    The tool will automatically check and install missing tools such as `subfinder`, `assetfinder`, `httpx`, `waybackurls`, `gau`, and `uro`.
+    The tool will automatically check and install missing tools such as `subfinder`, `assetfinder`, `httpx`, `waybackurls`, `gau`, `gospider` etc.
 
 4. **Output Structure:**:
 
-* Subdomains:
+   * Subdomains:
 
-   * subdomains.txt: All discovered subdomains.
-   * Genesis-Sub.txt: Unique subdomains.
+      * subdomains.txt: All discovered subdomains.
+      * Genesis-Sub.txt: Unique subdomains.
 
-* Live Subdomains:
+   * Live Subdomains:
 
-   * Genesis-live.txt: Verified live subdomains.
+      * Genesis-live.txt: Verified live subdomains.
 
-* Collected URLs:
+   * Collected URLs:
 
-   * wayback/wayback-url.txt: URLs from waybackurls.
+      * wayback/wayback-url.txt: URLs from waybackurls.
+      * gau/gau-urls.txt: URLs from gau.
+      * gospider/gospider-urls.txt: URLs from gospider.
+      * hakrawler/hakrawler-urls.txt: URLs from hakrawler.
+      * katana/katana-urls.txt: URLs from katana.
+      * paths.txt: Merged URLs.
 
-gau/gau-urls.txt: URLs from gau.
+   * Live URLs:
 
-gospider/gospider-urls.txt: URLs from gospider.
+      * Final-Live/URL-LIVE.txt: Checked live URLs.
+      * Final-Live/URL-LIVE-UNIQUE.txt: Unique live URLs.
 
-hakrawler/hakrawler-urls.txt: URLs from hakrawler.
+   * Filtered Files:
 
-katana/katana-urls.txt: URLs from katana.
+      * Separate directories for `.php`, `.json`, `.env`, and other file types.
 
-paths.txt: Merged URLs.
+   * Open Redirects:
 
-Live URLs:
-
-Final-Live/URL-LIVE.txt: Checked live URLs.
-
-Final-Live/URL-LIVE-UNIQUE.txt: Unique live URLs.
-
-Filtered Files:
-
-Separate directories for .php, .json, .env, and other file types.
-
-Open Redirects:
-
-Open-Redirect/redirect_params.txt: Parameters potentially vulnerable to open redirects.
+      * Open-Redirect/redirect_params.txt: Parameters potentially vulnerable to open redirects.
