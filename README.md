@@ -2,7 +2,7 @@
   <br>
   <a href="#"><img src="assets/recon60.png" alt="Assets"></a>
   <br>
-  File Upload Secuirty Best Practices  
+  RECON60 - Advanced Bug Bounty Hunting Tool
   <br>
 </h1>
 
