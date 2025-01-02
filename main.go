@@ -94,7 +94,7 @@ func main() {
 		redirectParamsFile := fmt.Sprintf("%s/redirect_params.txt", OpenRedirectDir)
 
 		// Correctly escape quotes in the grep command
-		grepCommand := fmt.Sprintf(`grep -E "url=|redirect=|next=|return=|dest=|destination=|to=|goto=|out=|path=|view=|continue=|rurl=|rdr=|redir=|u=|ref=|refer=|site=|uri=|link=|callback=|forward=|forwardTo=|go=|target=|returnTo=|return_url=|redirect_uri=|redirect_url=|redirectTo=|RelayState=" %s > %s`, liveURLFile, redirectParamsFile)
+		grepCommand := fmt.Sprintf(`grep -E \"url=|redirect=|next=|return=|destination=|dest=|window=|reference=|data=|html=|to=|goto=|out=|path=|view=|continue=|rurl=|rdr=|redir=|u=|ref=|refer=|site=|uri=|link=|callback=|forward=|forwardTo=|go=|target=|returnTo=|return_url=|redirect_uri=|redirect_url=|redirectTo=|RelayState=\" %s > %s`, liveURLFile, redirectParamsFile)
 		executeCommand(grepCommand)
 
 		// Filter specific file types
